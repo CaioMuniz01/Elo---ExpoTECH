@@ -25,8 +25,12 @@ export const restoreSession = async () => { const savedUrl = Platform.OS === 'we
 export async function configureServer(value: string) {
   const url = new URL(value.trim());
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash || url.pathname !== '/') throw new Error('Informe apenas o endereço do servidor, como http://192.168.1.10:3001');
-  const response = await fetch(`${url.origin}/health`, { signal: AbortSignal.timeout(8000) });
-  if (!response.ok || (await response.json()).ok !== true) throw new Error('Servidor Elo não encontrado neste endereço.');
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch(`${url.origin}/health`, { signal: controller.signal });
+    if (!response.ok || (await response.json()).ok !== true) throw new Error('Servidor Elo não encontrado neste endereço.');
+  } catch { throw new Error('Não foi possível conectar ao servidor Elo. Confira o endereço, o Wi-Fi e se o servidor está ligado.'); }
+  finally { clearTimeout(timeout); }
   await clearSession();
   if (Platform.OS === 'web') sessionStorage.setItem('elo.api', url.origin); else await SecureStore.setItemAsync('elo.api', url.origin);
   baseUrl = url.origin;
