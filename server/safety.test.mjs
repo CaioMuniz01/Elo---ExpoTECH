@@ -45,6 +45,8 @@ test('Contato persiste, SOS exige contato e coordenadas atuais autorizadas; repe
   assert.equal((await request(`/safety/alerts/${alert.id}`, 'PATCH', { status: 'opened' }, other.token)).status, 404);
 });
 test('IA exige consentimento e usa contexto real mínimo sem telefone nem coordenadas', async t => {
+  // Fast machines can persist both messages in the same millisecond.
+  t.mock.method(Date, 'now', () => 1794456000000);
   let received;
   const { request, token } = await fixture(t, async input => { received = input; return { reply: 'Use Preparar SOS para avisar seu contato.', category: 'concern', origin: 'ai', provider: 'openai', model: 'test-double' }; });
   assert.equal((await request('/safety/chat', 'POST', { message: 'Preciso de ajuda' }, token)).status, 403);

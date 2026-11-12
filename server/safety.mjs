@@ -16,7 +16,7 @@ export function createSafetyService(db, options = {}) {
     CREATE TABLE IF NOT EXISTS safety_alerts(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id),client_id TEXT NOT NULL,recipient TEXT NOT NULL,message TEXT NOT NULL,map_url TEXT,created INTEGER NOT NULL,status TEXT NOT NULL,UNIQUE(user_id,client_id));`);
   const inFlight = new Set(), attempts = new Map();
   const getSettings = uid => { const row = db.prepare('SELECT * FROM safety_settings WHERE user_id=?').get(uid); return { contact: row?.contact ? JSON.parse(row.contact) : null, aiConsent: !!row?.ai_consent }; };
-  const getMessages = uid => db.prepare('SELECT * FROM (SELECT id,role,body AS text,metadata,created FROM safety_messages WHERE user_id=? ORDER BY rowid DESC LIMIT 60) ORDER BY created ASC').all(uid).map(m => ({ ...m, metadata: JSON.parse(m.metadata) }));
+  const getMessages = uid => db.prepare('SELECT id,role,text,metadata,created FROM (SELECT rowid AS sequence,id,role,body AS text,metadata,created FROM safety_messages WHERE user_id=? ORDER BY rowid DESC LIMIT 60) ORDER BY sequence ASC').all(uid).map(m => ({ ...m, metadata: JSON.parse(m.metadata) }));
   const getAlert = (id, uid) => db.prepare('SELECT id,recipient,message,map_url AS mapUrl,created,status FROM safety_alerts WHERE id=? AND user_id=?').get(id, uid);
   async function handle(path, method, body, uid) {
     if (path === '/safety' && method === 'GET') return { ...getSettings(uid), assistant: aiStatus(), messages: getMessages(uid), alerts: db.prepare('SELECT id,created,status,map_url AS mapUrl FROM safety_alerts WHERE user_id=? ORDER BY created DESC LIMIT 10').all(uid) };
