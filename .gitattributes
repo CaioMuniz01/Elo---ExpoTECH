@@ -1,0 +1,9 @@
+* text=auto
+*.png binary
+*.jpg binary
+*.ttf binary
+*.mjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.yml text eol=lf
+*.json text eol=lf

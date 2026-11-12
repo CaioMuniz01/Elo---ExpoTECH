@@ -1,0 +1,42 @@
+{
+  "name": "elo",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "server": "node server/index.mjs",
+    "test": "node --test server/*.test.mjs",
+    "test:performance": "node scripts/run-jmeter.mjs",
+    "test:ui": "playwright test"
+  },
+  "dependencies": {
+    "@expo-google-fonts/manrope": "^0.4.3",
+    "@expo-google-fonts/outfit": "^0.4.3",
+    "@expo/metro-runtime": "~55.0.0",
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-community/slider": "5.1.2",
+    "expo": "~55.0.0",
+    "expo-clipboard": "~55.0.17",
+    "expo-constants": "~55.0.17",
+    "expo-font": "~55.0.8",
+    "expo-image-picker": "~55.0.24",
+    "expo-linear-gradient": "~55.0.18",
+    "expo-location": "~55.1.15",
+    "expo-secure-store": "~55.0.18",
+    "expo-sms": "~55.0.18",
+    "expo-speech": "~55.0.18",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.10",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/react": "~19.2.0",
+    "typescript": "~5.9.2"
+  }
+}

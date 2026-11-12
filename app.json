@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Elo",
+    "slug": "elo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.elo.app"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Permita que o Elo use sua localização para mostrar pessoas na distância escolhida. Sua posição exata não aparece no perfil."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permita que o Elo acesse uma foto escolhida por você para o seu perfil.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-font",
+      "./app.plugin.js"
+    ]
+  }
+}

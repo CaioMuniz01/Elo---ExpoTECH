@@ -1,0 +1,5 @@
+{
+  "religion": ["Católica", "Evangélica", "Espírita", "Umbanda", "Candomblé", "Judaica", "Islâmica", "Budista", "Agnóstica", "Ateia", "Outra"],
+  "intention": ["Relacionamento sério", "Conhecer pessoas", "Ainda descobrindo"],
+  "gender": ["Mulher", "Homem", "Pessoa não binária", "Agênero", "Gênero fluido", "Outra identidade"]
+}

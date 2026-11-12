@@ -1,0 +1,8 @@
+{
+  "tool": "Built-in image_gen",
+  "profiles": {
+    "marina": "Use case: photorealistic-natural. Asset: fictional adult dating app example profile photo. A fictional Brazilian woman, age 27, medium brown skin, shoulder length curly dark hair, wearing a modest cream blouse, candid smiling portrait in a leafy outdoor cafe. Chest-up portrait, subject centered, portrait 2:3 composition, natural skin texture, warm natural light, soft background bokeh. Tasteful fully clothed, no sexual content, no text, no watermark, no interface. Entirely invented person.",
+    "rafael": "Use case: photorealistic-natural. Asset: fictional adult dating app example profile photo. A fictional Brazilian man, age 30, black skin, close cropped hair, wearing a casual olive shirt, relaxed smiling portrait in a sunny urban park. Chest-up portrait, subject centered, portrait 2:3 composition, natural skin texture, warm natural light, soft background bokeh. Tasteful fully clothed, no sexual content, no text, no watermark, no interface. Entirely invented person.",
+    "clara": "Use case: photorealistic-natural. Asset: fictional adult dating app example profile photo. A fictional Brazilian woman, age 26, light skin, auburn shoulder length hair, wearing a casual muted burgundy sweater, relaxed smiling portrait at an outdoor bookshop. Chest-up portrait, subject centered, portrait 2:3 composition, natural skin texture, warm natural light, soft background bokeh. Tasteful fully clothed, no sexual content, no text, no watermark, no interface. Entirely invented person."
+  }
+}

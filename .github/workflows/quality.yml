@@ -1,0 +1,91 @@
+name: Elo quality and Android APK
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: elo-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interface-test-results
+          path: test-results/
+          retention-days: 14
+  performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Download and verify JMeter
+        shell: bash
+        run: |
+          mkdir -p tools
+          curl --fail --location --retry 3 https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -o tools/jmeter.tgz
+          curl --fail --location --retry 3 https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz.sha512 -o tools/jmeter.sha512
+          EXPECTED=$(awk '{print $1}' tools/jmeter.sha512)
+          echo "$EXPECTED  tools/jmeter.tgz" | sha512sum --check -
+          tar -xzf tools/jmeter.tgz -C tools
+      - run: npm run test:performance
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jmeter-report
+          path: artifacts/jmeter-*/
+          retention-days: 14
+  android:
+    needs: [checks, performance]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      EXPO_PUBLIC_API_URL: ${{ vars.ELO_API_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npx expo prebuild --platform android --no-install
+      - run: chmod +x android/gradlew
+      - name: Build bundled presentation APK (ARM64)
+        working-directory: android
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: elo-android-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
