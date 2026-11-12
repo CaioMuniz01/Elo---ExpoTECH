@@ -6,10 +6,10 @@
 | Autenticação | Cadastro, login, scrypt, sessões com validade, logout e autorização de rotas. Testes de acesso entre contas e revogação. |
 | Persistência SQL/NoSQL | SQLite: contas, sessões, filtros, curtidas, matches, chat, denúncias, contatos, conversa com IA e pedidos SOS. Teste de reinício do banco. |
 | Modelo de ML ou chatbot por API usando dados reais do app | OpenAI Responses API, saída estruturada e contexto limitado do usuário. Conexão real validada em 12/11/2026, com retorno de gpt-4.1-mini-2025-04-14. Os filtros continuam determinísticos; o requisito de IA é atendido pelo chatbot. |
-| Testes unitários | Regras de ranking, distância, catálogo e adaptador da IA; acompanhados de testes de integração HTTP/SQLite. 18 testes do servidor passaram localmente. |
-| Testes de interface | 7 testes Playwright passaram localmente e no GitHub: cadastro, filtros, login/logout, fotos, match/chat e segurança. Testes nativos em aparelho ainda são necessários para voz, discador, SMS e GPS. |
+| Testes unitários | Regras de ranking, distância, catálogo e adaptador da IA; acompanhados de testes de integração HTTP/SQLite. 20 testes do servidor passaram localmente e no CI. |
+| Testes de interface | 8 testes Playwright passaram localmente e no GitHub: cadastro, filtros, login/logout, fotos, match/chat, segurança, perfil autorizado e confirmação de ação. Testes nativos em aparelho ainda são necessários para voz, discador, SMS e GPS. |
 | Desempenho com JMeter | Plano performance/elo.jmx e execução automatizada isolada. 610 requisições, 10 usuários, zero falhas, média 8,46 ms e p95 28 ms na execução local inicial. Não mede a latência da OpenAI nem rede de produção. |
-| CI/CD publicando APK como artefato | Execução [43147579601](https://github.com/CaioMuniz01/elo/actions/runs/43147579601) aprovada em 12/11/2026: verificações, JMeter e Android. APK release ARM64 publicado como elo-android-apk, junto aos relatórios. |
+| CI/CD publicando APK como artefato | Execução [43151179131](https://github.com/CaioMuniz01/elo/actions/runs/43151179131) aprovada em 12/11/2026: verificações, JMeter e Android. APK 0.2.0 release ARM64 publicado como elo-android-apk, junto às evidências de testes. |
 
 ## Regras dos filtros
 

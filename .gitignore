@@ -15,3 +15,7 @@ ios/
 tools/
 artifacts/
 entregas/
+# Ferramentas e materiais de apresentação: somente neste computador.
+/scripts/capture-report-assets.mjs
+/scripts/generate-reports.mjs
+/scripts/package-reports.mjs

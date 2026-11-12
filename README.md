@@ -25,7 +25,9 @@ Copie `server/.env.example` para `server/.env` e preencha `OPENAI_API_KEY` somen
 
 Na aba **Segurança**, cadastre um contato de confiança. O botão **Preparar SOS** monta uma mensagem com um ponto atual no mapa, quando autorizado e disponível. Você confirma o envio no SMS ou compartilha em outro aplicativo. O app não confirma entrega, não rastreia continuamente e não aciona serviços de emergência automaticamente. Ligações abrem o discador do celular. Esses recursos nativos precisam de validação em aparelho.
 
-O chat pede consentimento antes de enviar mensagens à OpenAI. Usa o primeiro nome, a existência de contato cadastrado e o estado do último pedido, sem enviar o telefone nem coordenadas ao modelo. Respostas podem ser lidas em voz pelo dispositivo; a voz começa desligada. A classificação do relato é feita pelo modelo, não por regras de palavras-chave. Se a IA falhar, aparece uma orientação fixa identificada como tal, e o SOS permanece independente da chamada de IA.
+O chat pede consentimento antes de enviar mensagens à OpenAI. Usa o primeiro nome, interesses, existência de contato e estado do último pedido, sem enviar telefone nem coordenadas ao modelo. Também oferece dicas de conversa e resumo do perfil selecionado, com autorização específica para nome, idade, cidade, bio, interesses e intenção. Fotos e mensagens privadas do match não são incluídas. O resumo trata de informações declaradas, sem avaliar caráter ou segurança da pessoa.
+
+A IA pode propor preparar SOS ou abrir SMS, compartilhamento e discador. O usuário revisa um modal e confirma; o servidor valida a proposta antes de o app executar a função. O modelo não escolhe um telefone arbitrário e não envia mensagens ou realiza ligações sozinho. Respostas podem ser lidas por expo-speech; a voz começa desligada. Em falha do provedor, aparece uma orientação fixa identificada como tal, e o SOS permanece independente da resposta de IA.
 
 ## Funcionalidades
 
@@ -48,6 +50,6 @@ Instalação do JMeter e evidências: [docs/TESTES.md](docs/TESTES.md). Requisit
 
 A pipeline `.github/workflows/quality.yml` executa verificações, Playwright e JMeter antes de compilar `assembleRelease`. Publica `elo-android-apk` para aparelhos ARM64. O JavaScript está incluído no APK e não precisa do Metro, mas precisa acessar a API. A assinatura gerada pelo template é de desenvolvimento, adequada à apresentação; uma publicação em loja exige chave própria. É possível definir a variável de repositório `ELO_API_URL`; o endereço também pode ser configurado no próprio app.
 
-A [pipeline aprovada](https://github.com/CaioMuniz01/elo/actions/runs/43147579601) publicou o APK e os relatórios. Veja [evidências](docs/EVIDENCIAS.md) e o [roteiro da apresentação](docs/APRESENTACAO.md).
+A [pipeline da versão 0.2.0](https://github.com/CaioMuniz01/elo/actions/runs/43151179131) publicou o APK e as evidências de testes. Veja [evidências](docs/EVIDENCIAS.md) e o [roteiro da apresentação](docs/APRESENTACAO.md). PDFs e materiais de apresentação são locais e não fazem parte do repositório.
 
 O projeto é um protótipo acadêmico funcional. Hospedagem pública, verificação de identidade/e-mail, recuperação de senha, moderação operacional e envio automatizado com confirmação de entrega ficam fora desta entrega.

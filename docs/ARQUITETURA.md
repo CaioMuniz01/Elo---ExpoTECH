@@ -22,3 +22,9 @@ O catálogo e as opções dos filtros são compartilhados entre cliente e servid
 ## Escopo acadêmico
 
 SQLite e scrypt síncronos são adequados para esta demonstração pequena; escala maior exige medir contenção, mover trabalho de senha para processamento assíncrono e revisar armazenamento. HTTP local, conta demo e assinatura Android de desenvolvimento não constituem uma configuração de loja ou produção. Falta hospedagem pública, processo de moderação, recuperação de conta e operação de um serviço de alerta. A interface não promete essas capacidades.
+
+## Assistente 0.2.0
+
+O retorno estruturado contém reply, category e actions. A lista de ações é fechada em shared/assistant-actions.json. Uma ação proposta não é executada pelo modelo: o usuário confirma um modal, o servidor valida propriedade da mensagem e pertença da ação à proposta, e o cliente chama uma função do aparelho. safety_actions registra estados informados pelo cliente; não comprova entrega ou ligação.
+
+O contexto de perfil exige profileConsent e rejeita perfis bloqueados ou incompletos. Inclui somente nome, idade, cidade, bio, interesses e intenção. Não inclui fotografia nem mensagens privadas do match. A análise resume fatos declarados e sugere perguntas; não determina caráter ou segurança.

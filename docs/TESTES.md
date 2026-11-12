@@ -5,7 +5,7 @@ Requer Node.js 24 e `npm ci`.
 | Comando | Escopo |
 | --- | --- |
 | npm run typecheck | Tipos do app TypeScript |
-| npm test | 18 testes de regras e integração do servidor, SQLite, autorização e IA |
+| npm test | 20 testes de regras e integração do servidor, SQLite, autorização e IA |
 | npm run test:ui | Playwright em viewport de celular, servidor em memória e IA substituída por fixture explícita |
 | npm run test:performance | JMeter real com relatório JTL, HTML e resumo JSON |
 
@@ -27,9 +27,9 @@ Evidência local inicial em 12/11/2026: `artifacts/jmeter-2026-11-12T03-07-30-00
 
 ## Android
 
-`npx expo prebuild --platform android --no-install` e `npx expo export --platform android --output-dir artifacts/android-bundle` passaram localmente. A compilação final e o upload do APK passaram no [workflow 43147579601](https://github.com/CaioMuniz01/elo/actions/runs/43147579601). A versão release inclui o bundle; a configuração de conexão fica disponível na tela inicial. O pacote foi baixado em artifacts/apk/app-release.apk e inspecionado com scripts/inspect-apk.ps1.
+`npx expo prebuild --platform android --no-install` e `npx expo export --platform android --output-dir artifacts/android-bundle` passaram localmente. A compilação final e o upload do APK passaram no [workflow 43151179131](https://github.com/CaioMuniz01/elo/actions/runs/43151179131). A versão release inclui o bundle; a configuração de conexão fica disponível na tela inicial. O pacote foi baixado em artifacts/apk-v02/app-release.apk e inspecionado com scripts/inspect-apk.ps1.
 
-São 7 testes de interface e 18 testes do servidor aprovados localmente e no CI. O JMeter no CI registrou 610 amostras, zero falhas, média 5,71 ms, p95 30 ms e máximo 70 ms.
+São 8 testes de interface e 20 testes do servidor aprovados localmente e no CI. O JMeter no CI registrou 610 amostras, zero falhas, média 2,49 ms, p95 5 ms e máximo 57 ms.
 
 O teste real da IA pode ser repetido manualmente com `node scripts/smoke-ai.mjs`. Ele faz uma chamada paga ao provedor usando um banco temporário em memória, sem enviar SMS, e salva artifacts/ai-smoke.json. Não faz parte dos testes automáticos do CI. As evidências estão em [EVIDENCIAS.md](EVIDENCIAS.md).
 
@@ -38,3 +38,5 @@ Antes da apresentação, validar em aparelho ARM64: instalação, conexão à AP
 ## Dependências
 
 Foi aplicada a correção compatível `npm audit fix`. Permanecem avisos em dependências transitivas do tooling Expo SDK 55; a correção sugerida pelo npm exige migração principal do Expo. Não foi aplicada atualização forçada sem validar a migração. Reexecute `npm audit` antes de disponibilizar o projeto publicamente. A API utiliza módulos nativos do Node, sem as dependências do tooling no caminho das requisições.
+
+Versão 0.2.0: `node scripts/smoke-assistant.mjs` repete três chamadas reais (dicas, resumo e proposta de ação), com cobrança do provedor e sem notificações. Os PDFs de apresentação e suas evidências organizadas ficam somente em entregas/, ignorada pelo Git.
