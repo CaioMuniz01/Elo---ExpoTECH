@@ -48,4 +48,6 @@ Instalação do JMeter e evidências: [docs/TESTES.md](docs/TESTES.md). Requisit
 
 A pipeline `.github/workflows/quality.yml` executa verificações, Playwright e JMeter antes de compilar `assembleRelease`. Publica `elo-android-apk` para aparelhos ARM64. O JavaScript está incluído no APK e não precisa do Metro, mas precisa acessar a API. A assinatura gerada pelo template é de desenvolvimento, adequada à apresentação; uma publicação em loja exige chave própria. É possível definir a variável de repositório `ELO_API_URL`; o endereço também pode ser configurado no próprio app.
 
+A [pipeline aprovada](https://github.com/CaioMuniz01/elo/actions/runs/43147579601) publicou o APK e os relatórios. Veja [evidências](docs/EVIDENCIAS.md) e o [roteiro da apresentação](docs/APRESENTACAO.md).
+
 O projeto é um protótipo acadêmico funcional. Hospedagem pública, verificação de identidade/e-mail, recuperação de senha, moderação operacional e envio automatizado com confirmação de entrega ficam fora desta entrega.

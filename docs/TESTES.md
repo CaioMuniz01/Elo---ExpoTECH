@@ -27,7 +27,11 @@ Evidência local inicial em 12/11/2026: `artifacts/jmeter-2026-11-12T03-07-30-00
 
 ## Android
 
-`npx expo prebuild --platform android --no-install` e `npx expo export --platform android --output-dir artifacts/android-bundle` passaram localmente. Compilação final e upload do APK estão no workflow do GitHub. A versão release inclui o bundle; a configuração de conexão fica disponível na tela inicial.
+`npx expo prebuild --platform android --no-install` e `npx expo export --platform android --output-dir artifacts/android-bundle` passaram localmente. A compilação final e o upload do APK passaram no [workflow 43147579601](https://github.com/CaioMuniz01/elo/actions/runs/43147579601). A versão release inclui o bundle; a configuração de conexão fica disponível na tela inicial. O pacote foi baixado em artifacts/apk/app-release.apk e inspecionado com scripts/inspect-apk.ps1.
+
+São 7 testes de interface e 18 testes do servidor aprovados localmente e no CI. O JMeter no CI registrou 610 amostras, zero falhas, média 5,71 ms, p95 30 ms e máximo 70 ms.
+
+O teste real da IA pode ser repetido manualmente com `node scripts/smoke-ai.mjs`. Ele faz uma chamada paga ao provedor usando um banco temporário em memória, sem enviar SMS, e salva artifacts/ai-smoke.json. Não faz parte dos testes automáticos do CI. As evidências estão em [EVIDENCIAS.md](EVIDENCIAS.md).
 
 Antes da apresentação, validar em aparelho ARM64: instalação, conexão à API na rede, permissões GPS negada/concedida, reprodução/interrupção de voz, abertura/cancelamento de SMS, compartilhamento, discador e retomada do app. Use somente um contato de teste consentido e não ligue para serviços reais durante demonstrações.
 
