@@ -1,0 +1,9 @@
+{
+  "prepare_sos": "Preparar SOS com localização opcional",
+  "open_sms": "Preparar SOS e abrir SMS",
+  "share_sos": "Preparar SOS e compartilhar",
+  "call_contact": "Abrir discador para meu contato",
+  "call_police": "Abrir discador 190",
+  "call_fire": "Abrir discador 193",
+  "call_medical": "Abrir discador 192"
+}

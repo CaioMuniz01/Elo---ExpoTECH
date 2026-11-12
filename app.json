@@ -2,14 +2,15 @@
   "expo": {
     "name": "Elo",
     "slug": "elo",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.elo.app"
+      "package": "com.elo.app",
+      "versionCode": 2
     },
     "plugins": [
       "expo-secure-store",

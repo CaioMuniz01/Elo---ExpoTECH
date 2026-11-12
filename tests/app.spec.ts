@@ -197,3 +197,32 @@ test('perfis adicionais mostram somente seu retrato e abrem detalhes', async ({ 
   await page.getByRole('button', { name: 'Ver perfil de Lara', exact: true }).click();
   await expect(page.getByRole('img', { name: 'Foto completa de Lara' })).toBeVisible();
 });
+
+test('assistente usa perfil autorizado e pede confirmação antes de preparar SOS', async ({ page, request }) => {
+  const registered = await request.post('http://127.0.0.1:3002/auth/register', { data: { email: `assistant-${Date.now()}@teste.com`, password: 'Teste123!', name: 'Pessoa QA', age: 29 } });
+  const { token } = await registered.json(); await page.addInitScript(value => sessionStorage.setItem('elo.session', value), token);
+  await page.goto('/'); await page.getByRole('button', { name: 'Ver perfil de Marina', exact: true }).click();
+  await page.getByRole('button', { name: 'Conversar sobre este perfil' }).click();
+  await expect(page.getByRole('tab', { name: 'Segurança' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('checkbox', { name: 'Autorizar conversa com a IA' }).click();
+  await expect(page.getByRole('button', { name: 'Resumir o perfil selecionado' })).toBeDisabled();
+  await page.getByRole('checkbox', { name: 'Autorizar dados do perfil selecionado à IA' }).click();
+  await page.getByRole('button', { name: 'Resumir o perfil selecionado' }).click();
+  await expect(page.getByText(/Perfil declarado de Marina:/)).toBeVisible();
+  await page.screenshot({ path: 'test-results/assistente-perfil.png' });
+  await page.getByLabel('Nome do contato de confiança', { exact: true }).fill('Contato QA');
+  await page.getByLabel('Telefone do contato de confiança', { exact: true }).fill('11999990000');
+  await page.getByRole('button', { name: 'Salvar contato de confiança' }).click();
+  await expect(page.getByText('Contato de confiança salvo.', { exact: true })).toBeVisible();
+  await page.getByRole('checkbox', { name: 'Incluir localização atual no SOS' }).click();
+  await page.getByRole('button', { name: 'Pedir para preparar SOS' }).click();
+  const action = page.getByRole('button', { name: 'Preparar SOS com localização opcional', exact: true });
+  await action.click();
+  await expect(page.getByText('Confirmar ação do assistente', { exact: true })).toBeVisible();
+  await page.screenshot({ path: 'test-results/assistente-confirmacao.png' });
+  await page.getByRole('button', { name: 'Cancelar ação', exact: true }).click();
+  await expect(page.getByText('Pedido preparado', { exact: true })).toHaveCount(0);
+  await action.click(); await page.getByRole('button', { name: 'Confirmar ação', exact: true }).click();
+  await expect(page.getByText('Preparado · envio ainda não realizado', { exact: true })).toBeVisible();
+  await page.screenshot({ path: 'test-results/assistente-sos.png' });
+});

@@ -7,8 +7,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Message, Profile } from './api';
 import { paletteFor, profilePhoto } from './visuals';
 
-type Props = { peer: Profile; user: Profile; messages: Message[]; value: string; onChange: (v: string) => void; onSend: () => void; busy: boolean; error: string; onBack: () => void; onReport: () => void };
-export function ChatConversation({ peer, user, messages, value, onChange, onSend, busy, error, onBack, onReport }: Props) {
+type Props = { peer: Profile; user: Profile; messages: Message[]; value: string; onChange: (v: string) => void; onSend: () => void; busy: boolean; error: string; onBack: () => void; onReport: () => void; onAskAssistant: () => void };
+export function ChatConversation({ peer, user, messages, value, onChange, onSend, busy, error, onBack, onReport, onAskAssistant }: Props) {
   const c = paletteFor(user.theme), photo = profilePhoto(peer);
   const [showProfile, setShowProfile] = useState(false);
   const list = useRef<ScrollView>(null), followEnd = useRef(true);
@@ -49,7 +49,7 @@ export function ChatConversation({ peer, user, messages, value, onChange, onSend
       }} />
       <Pressable accessibilityRole="button" accessibilityLabel="Enviar mensagem" disabled={busy || !value.trim()} aria-disabled={busy || !value.trim()} onPress={onSend} style={({ pressed }) => [s.send, { backgroundColor: c.accent, opacity: busy || !value.trim() ? 0.4 : pressed ? 0.75 : 1 }]}>{busy ? <ActivityIndicator color="#fff" size="small" /> : <Ionicons name="arrow-up" size={24} color="#fff" />}</Pressable>
     </View><Text style={[s.hint, { color: c.muted }]}>{Platform.OS === 'web' ? 'Enter envia · Shift + Enter quebra a linha' : 'Converse no seu ritmo. Respeito sempre.'}</Text></View>
-    {showProfile && <ProfileDetails profile={peer} theme={user.theme} onClose={() => setShowProfile(false)} />}
+    {showProfile && <ProfileDetails onAskAssistant={() => { setShowProfile(false); onAskAssistant(); }} profile={peer} theme={user.theme} onClose={() => setShowProfile(false)} />}
   </View>;
 }
 

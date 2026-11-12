@@ -81,9 +81,46 @@ test('Adaptador OpenAI usa Responses sem armazenamento e rejeita afirmação de 
   const previous = process.env.OPENAI_API_KEY; process.env.OPENAI_API_KEY = 'test-only';
   try {
     let payload;
-    const fetcher = async (_url, options) => { payload = JSON.parse(options.body); return { ok: true, json: async () => ({ output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify({ reply: 'Enviei seu alerta.', category: 'danger' }) }] }] }) }; };
+    const fetcher = async (_url, options) => { payload = JSON.parse(options.body); return { ok: true, json: async () => ({ output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify({ reply: 'Enviei seu alerta.', category: 'danger', actions: [] }) }] }] }) }; };
     await assert.rejects(() => askSafetyAI({ messages: [{ role: 'user', content: 'Ajuda' }], context: {} }, fetcher), { code: 'invalid_output' });
     assert.equal(payload.store, false); assert.equal(payload.text.format.strict, true);
     await assert.rejects(() => askSafetyAI({ messages: [], context: {} }, async () => ({ ok: false, status: 429 })), { code: 'provider_limit' });
   } finally { if (previous === undefined) delete process.env.OPENAI_API_KEY; else process.env.OPENAI_API_KEY = previous; }
+});
+
+test('Resumo do perfil exige autorização, usa campos declarados e respeita bloqueio', async t => {
+  let context;
+  const { request, token } = await fixture(t, async input => { context = input.context; return { reply: 'Marina declara interesse em café e trilhas.', origin: 'ai', category: 'profile', actions: [] }; });
+  await request('/safety/settings', 'PUT', { aiConsent: true }, token);
+  assert.equal((await request('/safety/chat', 'POST', { message: 'Resuma o perfil', profileId: 'marina' }, token)).status, 403);
+  const result = await request('/safety/chat', 'POST', { message: 'Resuma o perfil', profileId: 'marina', profileConsent: true }, token);
+  assert.equal(result.status, 200); assert.equal(context.selectedProfile.name, 'Marina');
+  assert.deepEqual(Object.keys(context.selectedProfile).sort(), ['age', 'bio', 'city', 'intention', 'interests', 'name']);
+  assert.ok(!JSON.stringify(context).includes('photoUri')); assert.equal(result.messages[1].metadata.profileId, 'marina');
+  assert.equal((await request('/safety/chat', 'POST', { message: 'Resumo', profileId: 'inexistente', profileConsent: true }, token)).status, 404);
+  await request('/block', 'POST', { id: 'marina' }, token);
+  assert.equal((await request('/safety/chat', 'POST', { message: 'Resumo', profileId: 'marina', profileConsent: true }, token)).status, 404);
+});
+
+test('Ações propostas não executam automaticamente; confirmação e propriedade são obrigatórias', async t => {
+  const { request, token } = await fixture(t, async () => ({ reply: 'Posso preparar o SOS; confirme abaixo.', origin: 'ai', category: 'concern', actions: ['prepare_sos', 'call_contact', 'invalid_action'] }));
+  await request('/safety/settings', 'PUT', { aiConsent: true }, token);
+  const chat = await request('/safety/chat', 'POST', { message: 'Prepare um SOS' }, token);
+  const messageId = chat.messages.at(-1).id;
+  assert.deepEqual(chat.messages.at(-1).metadata.actions, ['prepare_sos', 'call_contact']);
+  assert.equal((await request('/safety', 'GET', undefined, token)).alerts.length, 0);
+  assert.equal((await request('/safety/actions', 'POST', { messageId, action: 'prepare_sos' }, token)).status, 400);
+  assert.equal((await request('/safety/actions', 'POST', { messageId, action: 'call_police', confirmation: true }, token)).status, 403);
+  assert.equal((await request('/safety/actions', 'POST', { messageId, action: 'prepare_sos', confirmation: true }, token)).status, 400);
+  await request('/safety/settings', 'PUT', { contact: { name: 'Contato', phone: '11999990000' } }, token);
+  const other = await request('/auth/register', 'POST', { email: 'actions@teste.com', password: 'Teste123!', name: 'Outro', age: 28 });
+  assert.equal((await request('/safety/actions', 'POST', { messageId, action: 'prepare_sos', confirmation: true }, other.token)).status, 403);
+  const confirmed = await request('/safety/actions', 'POST', { messageId, action: 'prepare_sos', confirmation: true }, token);
+  assert.equal(confirmed.status, 'confirmed'); assert.ok(confirmed.actionId);
+  assert.equal((await request('/safety', 'GET', undefined, token)).alerts.length, 0);
+  assert.equal((await request(`/safety/actions/${confirmed.actionId}`, 'PATCH', { status: 'opened' }, other.token)).status, 404);
+  assert.equal((await request(`/safety/actions/${confirmed.actionId}`, 'PATCH', { status: 'delivered' }, token)).status, 400);
+  assert.equal((await request(`/safety/actions/${confirmed.actionId}`, 'PATCH', { status: 'prepared' }, token)).status, 'prepared');
+  await request('/safety/messages', 'DELETE', undefined, token);
+  assert.equal((await request(`/safety/actions/${confirmed.actionId}`, 'PATCH', { status: 'opened' }, token)).status, 404);
 });
